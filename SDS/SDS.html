@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<title>Class Insight - SDS</title>
+	<style>
+		body {
+			padding: 30px;
+		}
+
+		.cover {
+			padding-right: 20px;
+			padding-top: 50px;
+		}
+
+		.cover * {
+
+			text-align: right;
+		}
+
+		@media print {
+			input#btnPrint {
+				display: none;
+			}
+		}
+
+
+		h1 {
+			font-size: 45px;
+		}
+
+		h2 {
+			font-size: 35px
+		}
+
+		h3 {
+			font-size: 30px;
+		}
+
+		h4 {
+			font-size: 25px;
+		}
+
+		h5 {
+			font-size: 18px;
+		}
+
+		.toc_holder {
+			border-bottom: 2px dotted #333;
+			clear: both;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+
+		.toc_holder div:nth-child(1) {
+			display: inline-block;
+		}
+
+		.toc_holder div:nth-child(2) {
+			display: inline-block;
+			float: none;
+		}
+
+
+		.toc_sub {
+
+			display: block;
+			clear: both;
+			padding-left: 40px;
+			margin-bottom: 10px;
+		}
+
+		.new_page {
+			page-break-after: always;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<div class="cover new_page" style="text-align: right; display: block;">
+		<h1>Software Design Specification</h1>
+		<h3>for</h3>
+		<h2>Online Class Management System</h2>
+		<h4>Version 1.0</h4>
+		<h4>Prepared by </h4>
+		<h4>North South University</h4>
+		<h4>23rd August, 2021</h4>
+
+		<input type="button" id="btnPrint" onclick="window.print();" value="Print" />
+
+	</div>
+
+	<!-- end of cover page -->
+
+
+
+
+	<h3>1. Introduction</h3>
+	<h4>Purpose:</h4>
+	<p>
+		During this present situation, we already came to know that the world is facing difficulty
+		in education process due to lack of face to face communication. 
+		For this, we tried to built an online application for the purpose of connecting easily in
+		education system. The application Online Class Management System (OCMS) may help both teachers
+		and students in online platform for studying any course in virtual classroom. 
+		Teachers and students can easily communicate through this application. 
+		Teachers can provide study materials for the enrolled students in their distinct
+		registered course via classroom. 
+	</p>
+
+	<h3>2. Document Conventions</h3>
+	<p>
+		<!--left blank intentionally-->
+	</p>
+	<h3>3. Description of design components</h3>
+	<p> <img src="Client-side.PNG" alt="System Archietecture">
+		</img>
+	</p>
+	<p> In this figure, we show the system architecture in which the display monitor (client's device) shows the OCMS
+		homepage. The main process of the software based on Python and Django framework in the Backend. File system using
+		MySQL database for the server maintenance.
+		<p> <img src="Server-side.PNG" alt="System Archietecture">
+		</img>
+	</p>
+
+		<h3>4. High level component design</h3>
+		<p> <img src="High level component design.PNG" alt="System Archietecture">
+		</img>
+	</p>
+		<p>
+			<!----left blank intentionally-->
+		</p>
+		<h3>5. Class Diagrams</h3>
+		<p> <img src="UML class Diagram.png" alt="UML">
+			</img>
+			<p>  </p>
+
+			<!----Detailed class description---->
+
+
+			<h3> 6. Database design</h3>
+			<h4> ER diagram</h4>
+			   
+			 <p>
+		    	
+                 <img src= "ER-Diagram.PNG" width="1500" height="600">
+			      </img>
+
+				<!----add image --->
+			</p>
+
+			<h4> Schemas </h4>
+
+			  <p> Person( NID , Email , Name )<br>
+			  	  Faculty ( NID , Email , Name ,faculty_id )<br>
+			  	  Admin (NID , Email , Name , Administator_id ,Add_studen , Manage_student)<br>
+			  	  Student ( Student_id , image )<br>
+			  	  F_Account ( F.Email , User_name , Password , faculty_id)<br>
+			  	  S_Account ( S.Email , User_name , Password , Student_id)<br>
+			  	  S_Dashboard ( S.Dash_id )<br>
+			  	  Task ( Task_number , PDF , Assignment )<br>
+			  	  F_Dashboard ( F.Dashboard_id )<br>
+			  	  Courses( course_id , title )<br>
+			  	  Section ( course_id , section_id )<br>
+			  	  takes (facuty_id , couse_id )<br>
+			  	  Assign( Faculty_id , task_number)<br>
+			  	  Check ( F_Dasboard_id , task_number , eye_tracking)<br>
+			  	  
+			  	  <!----add  description--->
+			  </p>  
+
+
+
+
+
+			<!----Detailed explanation--->
+			<h3>7. Implementation plan</h3>
+			<p>
+
+
+			</p>
+
+
+
+
+
+
+
+</body>
+
+</html>
