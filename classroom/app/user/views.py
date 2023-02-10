@@ -49,7 +49,7 @@ def register(request):
         user_form=UserForm()
         profile_form=UserProfileInfoForm()
 
-    return render(request, 'user/registration.html',{
+    return render(request, 'user/registration.html', {
         'resistered': resistered,
         'user_form': user_form,
         'profile_form': profile_form })

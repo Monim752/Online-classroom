@@ -21,7 +21,7 @@ import user
 import oursystem
 
 urlpatterns = [
-    path("", include("user.urls")),
+    path("", include("app.user.urls")),
     path("oursystem/", include("oursystem.urls")),
     path('admin/', admin.site.urls),
     path('api/',include("api.urls"))
