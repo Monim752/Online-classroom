@@ -1,4 +1,4 @@
-from oursystem.models import Subject
+from oursystem.models import Course
 from django.views.generic.base import TemplateView
 from .forms import UserForm, UserProfileInfoForm
 from django.shortcuts import render
@@ -19,9 +19,9 @@ class starting_page(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        subjects = Subject.objects.all()
+        courses = Course.objects.all()
         teachers = UserProfileInfo.objects.filter(user_type='teacher')
-        #context['subjects'] = subjects
+        context['courses'] = courses
         context['teachers'] = teachers
         return context
 

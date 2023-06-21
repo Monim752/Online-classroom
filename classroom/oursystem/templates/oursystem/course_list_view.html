@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} {{subjects.name}} {% endblock %}
+{% block title %} {{courses.name}} {% endblock %}
 
 {% block image_block %}
 <header class="info-header">
@@ -8,7 +8,7 @@
     <div class="row d-flex justify-content-center text-center">
       <div class="col-md-10 text-white">
         <!-- heading -->
-        <h2 class="display-4 font-weight-bold  p-5 " style="color:#ff5722;" > {{subjects.name}} </h2>
+        <h2 class="display-4 font-weight-bold  p-5 " style="color:#ff5722;" > {{courses.name}} </h2>
 
         <!-- divider -->
         <hr style="color:#ff5722;">
@@ -31,19 +31,19 @@
               </div>
               <!-- class row2 for cards -->
               <div class="row d-flex justify-content-center mb-3">
-                {% for course in subjects.courses.all %}
+                {% for course in courses.all %}
                 <div class="col-sm-4 mb-4">
                   <div class="card box-shadow-hover">
                     <div class="card-body">
-                      <h5 class="card-title">{{course.course_id}}, Section-{{course.section}}</h5>
+                      <h5 class="card-title">{{course.id}}, Section-{{course.section}}</h5>
                       {% if user.userprofileinfo.user_type == 'teacher' or user.is_superuser %}
                         <h5 class="card-title">Class code: {{course.code}} </h5>
-                        <a href="{% url 'oursystem:course_detail' slug=course.slug subject=subjects.slug %}" >
+                        <a href="{% url 'oursystem:course_detail' slug=course.slug %}" >
                         <button type="button" class="button-les"><span>Enter class</span></button>
                         </a>
                       {% endif %}
                       {% if user.userprofileinfo.user_type == 'student' %}
-                        <a href="{% url 'oursystem:course_detail' slug=course.slug subject=subjects.slug %}"> 
+                        <a href="{% url 'oursystem:course_detail' slug=course.slug%}">
                         <button type="button" class="button-les"><span>Join class</span></button>
                          </a>
                         
@@ -55,7 +55,7 @@
               </div>
         <div class="row d-flex justify-content-center mb-3">
           {% if user.userprofileinfo.user_type == 'teacher' or user.is_superuser %}
-           <a href="{% url 'oursystem:course_create' slug=subjects.slug %}"><button type="button" class="btn btn-success btn-lg btn-bloc" > Create new classroom </button> </a>
+           <a href="{% url 'oursystem:course_create' %}"><button type="button" class="btn btn-success btn-lg btn-bloc" > Create new classroom </button> </a>
           {% endif %}
         </div>
 

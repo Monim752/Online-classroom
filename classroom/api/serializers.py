@@ -2,7 +2,7 @@ from django.db import models
 from rest_framework import fields, serializers 
 from user.models import UserProfileInfo
 from django.contrib.auth.models import User
-from oursystem.models import Subject, Course, Comment, Reply
+from oursystem.models import Course, Comment, Reply
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,11 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return users
 
-
-class SubjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Subject
-        fields='__all__'
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:

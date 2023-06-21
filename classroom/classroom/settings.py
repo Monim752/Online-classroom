@@ -128,6 +128,10 @@ DATABASES = {
         'NAME': 'classroom',
         'USER': 'root',
         'PASSWORD': 'Monim@752',
+        'HOST': 'localhost',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        },
     }
 }
 

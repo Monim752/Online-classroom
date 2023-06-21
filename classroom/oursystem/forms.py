@@ -1,10 +1,39 @@
 from django import forms
-from .models import  Course, Comment, Reply
+from .models import Course, Comment, Reply, Lecture, Enrollment, Attendance
+
 
 class CourseForm(forms.ModelForm):
+
+    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     class Meta:
         model = Course
-        fields = ('course_id','name','subject','section','code','ppt','pdf')
+        fields = ('name', 'code', 'description', 'duration', 'start_date', 'end_date', 'instructor', 'created_by', 'updated_by')
+        widgets = {
+            'created_by': forms.HiddenInput(),
+            'updated_by': forms.HiddenInput(),
+        }
+
+class LectureForm(forms.ModelForm):
+    class Meta:
+        model = Lecture
+        fields = ('name', 'course', 'date', 'start_time', 'end_time')
+
+
+class EnrollmentForm(forms.ModelForm):
+    class Meta:
+        model = Enrollment
+        fields = ('user', 'course')
+
+
+class AttendanceForm(forms.ModelForm):
+    class Meta:
+        model = Attendance
+        fields = ('lecture', 'student', 'status')
+        widgets = {
+            'lecture': forms.HiddenInput(),
+            'student': forms.HiddenInput(),
+        }
 
 
 class CommentForm(forms.ModelForm):
@@ -17,6 +46,7 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'body': forms.Textarea(attrs={'class':'form-control', 'rows':4, 'cols':70, 'placeholder':"Enter Your Comment"}),
         }
+
 
 class ReplyForm(forms.ModelForm):
     class Meta:

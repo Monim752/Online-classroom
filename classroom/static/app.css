@@ -6,10 +6,10 @@ header,
 }
 
 #intro {
-    background:linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://besthqwallpapers.com/Uploads/16-5-2020/132669/stack-of-books-blue-background-education-concepts-books-library.jpg")no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
+    background-image:url("/static/img/background.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
     background-size: cover;
 }
 
@@ -94,10 +94,10 @@ hr{
 }
 
 #page-intro {
-    background:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.communitiesinschools.org/media/filer_public/ff/13/ff135f2a-6c3b-4f2a-9db6-38635fe64dde/empty-desk.jpg")no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
+    background-image:url("/static/img/background_1.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
     background-size: cover;
 }
 /* breadcrumb class */

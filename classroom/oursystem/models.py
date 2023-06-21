@@ -6,21 +6,6 @@ from django.template.defaultfilters import slugify
 import os
 from django.contrib.auth.models import User
 from django.urls import reverse
-# Create your models here.
-
-
-class Subject(models.Model):
-    subject_id = models.CharField(max_length=100, unique=True)
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(null=True, blank=True)
-    description = models.TextField(max_length=500,blank=True)
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.subject_id)
-        super().save(*args, **kwargs)
 
 
 def save_course_files(instance, filename):
@@ -36,33 +21,60 @@ def save_course_files(instance, filename):
 
 
 class Course(models.Model):
-    course_id = models.CharField(max_length=100,)
-    created_by = models.ForeignKey(User,on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=20)
+    description = models.TextField(max_length=255, default='')
+    duration = models.IntegerField(default=0)
+    instructor = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    start_date = models.DateField(default='')
+    end_date = models.DateField(default='')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses_created', default=None)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses_updated', default=None)
     created_at = models.DateTimeField(auto_now_add=True)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='courses')
-    name = models.CharField(max_length=250)
-    code = models.CharField(max_length=7, auto_created=True, unique=True)
-    section = models.PositiveSmallIntegerField(verbose_name="Section no.")
-    slug = models.SlugField(null=True, blank=True)
-    video = models.FileField(upload_to=save_course_files,verbose_name="Video", blank=True, null=True)
-    ppt = models.FileField(upload_to=save_course_files,verbose_name="Presentations", blank=True)
-    pdf = models.FileField(upload_to=save_course_files,verbose_name="pdf", blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['section']
-        ordering=['code']
+        ordering=['id']
+
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse('oursystem:course_list', kwargs={'pk': self.pk})
+
+
+class Enrollment(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=None)
+    enrolled_date = models.DateTimeField(auto_now_add=True)
+    completed = models.BooleanField(default=False)
+    completion_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course.name}"
+
+
+class Lecture(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    date = models.DateField(default=None)
+    start_time = models.TimeField(default=None)
+    end_time = models.TimeField(default=None)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
-        return reverse('oursystem:course_list', kwargs={'slug':self.subject.slug })
-        
+        return reverse('lecture_detail', args=[str(self.id)])
 
-    
+    class Meta:
+        ordering = ['date', 'start_time']
+
 
 class Comment(models.Model):
     course_name = models.ForeignKey(Course, null=True, on_delete=models.CASCADE,related_name='comments')
@@ -81,6 +93,22 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-date_added']
+
+
+class Attendance(models.Model):
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, default=None)
+    status = models.CharField(max_length=20, choices=(
+        ('present', 'Present'),
+        ('absent', 'Absent'),
+        ('late', 'Late'),
+    ))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('student', 'lecture')
 
 class Reply(models.Model):
     comment_name = models.ForeignKey(Comment, on_delete=models.CASCADE,related_name='replies')

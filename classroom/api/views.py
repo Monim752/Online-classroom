@@ -2,16 +2,15 @@
 from re import A
 
 from django.contrib.auth.models import User
-from oursystem.models import Subject
 from api import serializers
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .serializers import UserSerializer, SubjectSerializer, CourseSerializer
+from .serializers import UserSerializer, CourseSerializer
 from user.models import UserProfileInfo
-from oursystem.models import Subject, Course
+from oursystem.models import Course
 from rest_framework import status
 
 def getRoutes(request):
@@ -39,8 +38,8 @@ class getUser(APIView):
 
 @api_view(['GET'])
 def getSystem(request):
-    oursystem=Subject.objects.all()
-    serializer=SubjectSerializer(oursystem, many=True)
+    oursystem=Course.objects.all()
+    serializer=CourseSerializer(oursystem, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])

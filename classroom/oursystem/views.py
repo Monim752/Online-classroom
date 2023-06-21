@@ -1,7 +1,7 @@
 from django.views.generic.base import View
-from oursystem.models import Subject, Course, Comment
+from oursystem.models import Course, Comment
 from django.db import models
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import (TemplateView, CreateView,
                                     UpdateView, DeleteView, DetailView, ListView, FormView)
 from django.urls import reverse_lazy, reverse
@@ -11,18 +11,18 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
-class SubjectListView(ListView):
-    context_object_name = 'subjects'
-    model = Subject
-    template_name = 'oursystem/subject_list_view.html'
-
-
-class CourseListView(DetailView):
-    context_object_name = 'subjects'
-    model = Subject
+class CourseListView(ListView):
+    context_object_name = 'courses'
+    model = Course
     template_name = 'oursystem/course_list_view.html'
 
+# def course_view(request):
+#     context = {}
+#
+#     # add the dictionary during initialization
+#     context["dataset"] = Course.objects.all()
+#
+#     return render(request, "oursystem/course_list_view.html", context)
 
 """class JoinClass(DetailView, FormView):
     form_class = CourseForm
@@ -44,8 +44,15 @@ class CourseListView(DetailView):
         self.object = self.get_object()
         return reverse_lazy('oursystem:course_list',kwargs={'slug':self.object.slug})"""
 
+# def course_detail(request, course_id):
+#     models = Course
+#     form_class = CommentForm
+#     second_form_class = ReplyForm
+#     course = get_context_data(models, pk=course_id)
+#     context = {'course': course}
+#     return render(request, 'course_detail.html', context)
 
-class CourseDetailView(DetailView, FormView):
+class CourseDetailView(DetailView, FormView, ListView):
     context_object_name = 'courses'
     model = Course
     template_name = 'oursystem/course_detail_view.html'
@@ -85,9 +92,8 @@ class CourseDetailView(DetailView, FormView):
 
     def get_success_url(self):
         self.object = self.get_object()
-        subject = self.object.subject
-        return reverse_lazy('oursystem:course_detail',kwargs={'subject':subject.slug,
-                                                             'slug':self.object.slug})
+        course = self.object.course
+        return reverse_lazy('oursystem:course_detail',kwargs={'pk': self.pk})
     def form_valid(self, form):
         self.object = self.get_object()
         fm = form.save(commit=False)
@@ -105,39 +111,56 @@ class CourseDetailView(DetailView, FormView):
         fm.save()
         return HttpResponseRedirect(self.get_success_url())
 
+# def course_create(request):
+#     # dictionary for initial data with
+#     # field names as keys
+#     context = {}
+#
+#     # add the dictionary during initialization
+#     form = CourseForm(request.POST or None)
+#     if form.is_valid():
+#         fm = form.save(commit=False)
+#         fm.created_by = request.user
+#         fm.save()
+#
+#     context['form'] = form
+#     return render(request, "oursystem/course_create.html", context)
+
 
 class CourseCreateView(CreateView):
     #fields = ('course_id','name','section','code')
+    # import pdb;
+    # pdb.set_trace()
     form_class = CourseForm
-    context_object_name = 'subject'
-    model= Subject
+    context_object_name = 'course'
+    model = Course
     template_name = 'oursystem/course_create.html'
 
     def get_success_url(self):
         self.object = self.get_object()
-        return reverse_lazy('oursystem:course_list',kwargs={'slug':self.object.slug})
-
+        return reverse_lazy('oursystem:course_list')
 
     def form_valid(self, form, *args, **kwargs):
         self.object = self.get_object()
         fm = form.save(commit=False)
         fm.created_by = self.request.user
-        fm.subject = self.object
         fm.save()
         return HttpResponseRedirect(self.get_success_url())
 
 class CourseUpdateView(UpdateView):
-    fields = ('name','section','ppt','pdf')
-    model= Course
+    fields = ('name', 'description', 'duration', 'start_date', 'end_date')
+    model = Course
     template_name = 'oursystem/course_update.html'
     context_object_name = 'courses'
 
+
 class CourseDeleteView(DeleteView):
-    model= Course
+    model = Course
     context_object_name = 'courses'
     template_name = 'oursystem/course_delete.html'
 
     def get_success_url(self):
+        self.object = self.get_object()
         print(self.object)
         subject = self.object.subject
-        return reverse_lazy('oursystem:course_list',kwargs={'slug':subject.slug})
+        return reverse_lazy('oursystem:course_list', kwargs={'pk': self.pk})
