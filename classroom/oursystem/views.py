@@ -52,23 +52,34 @@ class CourseListView(ListView):
 #     context = {'course': course}
 #     return render(request, 'course_detail.html', context)
 
-class CourseDetailView(DetailView, FormView, ListView):
-    context_object_name = 'courses'
+
+class CourseDetailView(DetailView):
+    context_object_name = 'course'
     model = Course
     template_name = 'oursystem/course_detail_view.html'
     form_class = CommentForm
     second_form_class = ReplyForm
+    queryset = Course.objects.all()  # Define the queryset for the view
 
     def get_context_data(self, **kwargs):
-        context = super(CourseDetailView, self).get_context_data(**kwargs)
+        # import pdb
+        # pdb.set_trace()
+        context = super().get_context_data(**kwargs)
         if 'form' not in context:
-            context['form'] = self.form_class(request=self.request)
+            context['form'] = self.form_class()
         if 'form2' not in context:
-            context['form2'] = self.second_form_class(request=self.request)
+            context['form2'] = self.second_form_class()
         # context['comments'] = Comment.objects.filter(id=self.object.id)
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def post(self, request, *args, **kwargs):
+        import pdb
+        pdb.set_trace()
         self.object = self.get_object()
         if 'form' in request.POST:
             form_class = self.get_form_class()
@@ -77,28 +88,28 @@ class CourseDetailView(DetailView, FormView, ListView):
             form_class = self.second_form_class
             form_name = 'form2'
 
-        form = self.get_form(form_class)
-        # print("the form name is : ", form)
-        # print("form name: ", form_name)
-        # print("form_class:",form_class)
+        if form_name == 'form':
+            form = self.form_class(request=self.request, data=request.POST)
+            if form.is_valid():
+                return self.form_valid(form)
+        elif form_name == 'form2':
+            form = self.second_form_class(request=self.request, data=request.POST)
+            if form.is_valid():
+                return self.form2_valid(form)
 
-        if form_name=='form' and form.is_valid():
-            print("comment form is returned")
-            return self.form_valid(form)
-        elif form_name=='form2' and form.is_valid():
-            print("reply form is returned")
-            return self.form2_valid(form)
-
+        # If the form is invalid or not submitted, re-render the page with the form
+        context = self.get_context_data()
+        return self.render_to_response(context)
 
     def get_success_url(self):
         self.object = self.get_object()
-        course = self.object.course
-        return reverse_lazy('oursystem:course_detail',kwargs={'pk': self.pk})
+        return reverse('oursystem:course_detail', kwargs={'pk': self.object.pk})
+
     def form_valid(self, form):
         self.object = self.get_object()
         fm = form.save(commit=False)
         fm.author = self.request.user
-        fm.course_name = self.object.comments.name
+        fm.course_name = self.object.name
         fm.course_name_id = self.object.id
         fm.save()
         return HttpResponseRedirect(self.get_success_url())
@@ -111,41 +122,52 @@ class CourseDetailView(DetailView, FormView, ListView):
         fm.save()
         return HttpResponseRedirect(self.get_success_url())
 
-# def course_create(request):
-#     # dictionary for initial data with
-#     # field names as keys
-#     context = {}
-#
-#     # add the dictionary during initialization
-#     form = CourseForm(request.POST or None)
-#     if form.is_valid():
-#         fm = form.save(commit=False)
-#         fm.created_by = request.user
-#         fm.save()
-#
-#     context['form'] = form
-#     return render(request, "oursystem/course_create.html", context)
+
+def create_course(request):
+    if request.method == 'POST':
+        import pdb
+        pdb.set_trace()
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            course = form.save(commit=False)
+            course.created_by = request.user
+            course.updated_by = request.user
+            course.save()
+            return redirect('oursystem:course_list')
+    else:
+        form = CourseForm()
+
+    return render(request, 'oursystem/course_create.html', {'form': form})
 
 
 class CourseCreateView(CreateView):
-    #fields = ('course_id','name','section','code')
-    # import pdb;
-    # pdb.set_trace()
-    form_class = CourseForm
-    context_object_name = 'course'
+    # #fields = ('course_id','name','section','code')
+
     model = Course
     template_name = 'oursystem/course_create.html'
+    form_class = CourseForm
+    # context_object_name = 'course'
+
+
+
+    # fields = ['name', 'code', 'description', 'duration', 'instructor', 'start_date', 'end_date']
 
     def get_success_url(self):
-        self.object = self.get_object()
         return reverse_lazy('oursystem:course_list')
 
-    def form_valid(self, form, *args, **kwargs):
+    def form_valid(self, form):
+        import pdb
+        pdb.set_trace()
+        # def form_valid(self, form, *args, **kwargs):
         self.object = self.get_object()
         fm = form.save(commit=False)
         fm.created_by = self.request.user
+        fm.updated_by = self.request.user
         fm.save()
         return HttpResponseRedirect(self.get_success_url())
+        # form.instance.created_by = self.request.user
+        # form.instance.updated_by = self.request.user
+        # return super().form_valid(form)
 
 class CourseUpdateView(UpdateView):
     fields = ('name', 'description', 'duration', 'start_date', 'end_date')
@@ -164,3 +186,9 @@ class CourseDeleteView(DeleteView):
         print(self.object)
         subject = self.object.subject
         return reverse_lazy('oursystem:course_list', kwargs={'pk': self.pk})
+
+@login_required
+def join_video_meeting(request, **kwargs):
+    user_name = request.user.username  # Get the username
+    context = {'user_name': user_name}  # Create a context dictionary
+    return render(request, "oursystem/room.html", context)

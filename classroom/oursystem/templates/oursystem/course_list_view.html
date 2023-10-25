@@ -38,12 +38,12 @@
                       <h5 class="card-title">{{course.id}}, Section-{{course.section}}</h5>
                       {% if user.userprofileinfo.user_type == 'teacher' or user.is_superuser %}
                         <h5 class="card-title">Class code: {{course.code}} </h5>
-                        <a href="{% url 'oursystem:course_detail' slug=course.slug %}" >
+                        <a href="{% url 'oursystem:course_detail' pk=course.pk %}" >
                         <button type="button" class="button-les"><span>Enter class</span></button>
                         </a>
                       {% endif %}
                       {% if user.userprofileinfo.user_type == 'student' %}
-                        <a href="{% url 'oursystem:course_detail' slug=course.slug%}">
+                        <a href="{% url 'oursystem:course_detail' pk=course.pk%}">
                         <button type="button" class="button-les"><span>Join class</span></button>
                          </a>
                         

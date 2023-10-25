@@ -4,14 +4,12 @@ from .models import Course, Comment, Reply, Lecture, Enrollment, Attendance
 
 class CourseForm(forms.ModelForm):
 
-    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     class Meta:
         model = Course
-        fields = ('name', 'code', 'description', 'duration', 'start_date', 'end_date', 'instructor', 'created_by', 'updated_by')
+        fields = ['name', 'code', 'description', 'duration', 'instructor', 'start_date', 'end_date']
         widgets = {
-            'created_by': forms.HiddenInput(),
-            'updated_by': forms.HiddenInput(),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
 class LectureForm(forms.ModelForm):

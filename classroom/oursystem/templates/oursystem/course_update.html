@@ -46,7 +46,7 @@
                 <input type="submit" value="Update" class="btn btn-warning btn-block">
         </div>
         <div class="col-md-4 mb-3 mr-3">
-                <a href="{% url 'oursystem:course_detail' subject=courses.subject.slug slug=courses.slug %}" class="btn btn-danger btn-block">Cancel Update</a>
+                <a href="{% url 'oursystem:course_detail' pk=courses.pk %}" class="btn btn-danger btn-block">Cancel Update</a>
         </div>
 </div>
 </form>
